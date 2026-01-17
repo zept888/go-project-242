@@ -16,7 +16,8 @@ func main() {
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			path := cmd.Args().First()
 			if path == "" {
-				return fmt.Errorf("path is required")
+				fmt.Println(".hexlet-path-size <path required>")
+				return nil
 			}
 			return GetSize(path)
 		},
