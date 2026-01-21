@@ -76,3 +76,24 @@ func TestFormatSize_Gigabytes(t *testing.T) {
 	result := FormatSize(1073741824, true)
 	assert.Equal(t, "1.00GB", result)
 }
+
+func TestShowHiddenFlag_False(t *testing.T) {
+	tmpDir := t.TempDir()
+	require.NoError(t, os.WriteFile(tmpDir+"/normal.txt", make([]byte, 100), 0644))
+	require.NoError(t, os.WriteFile(tmpDir+"/.hidden.txt", make([]byte, 300), 0644))
+	require.NoError(t, GetSize(tmpDir, Options{HumanReadable: false, ShowHidden: false}))
+}
+
+func TestShowHiddenFlag_True(t *testing.T) {
+	tmpDir := t.TempDir()
+	require.NoError(t, os.WriteFile(tmpDir+"/normal.txt", make([]byte, 100), 0644))
+	require.NoError(t, os.WriteFile(tmpDir+"/.hidden.txt", make([]byte, 300), 0644))
+	require.NoError(t, GetSize(tmpDir, Options{HumanReadable: false, ShowHidden: true}))
+}
+
+func TestShowHiddenFlag_OnlyHiddenFiles(t *testing.T) {
+	tmpDir := t.TempDir()
+	require.NoError(t, os.WriteFile(tmpDir+"/.hidden1.txt", make([]byte, 400), 0644))
+	require.NoError(t, os.WriteFile(tmpDir+"/.hidden2.txt", make([]byte, 400), 0644))
+	require.NoError(t, GetSize(tmpDir, Options{HumanReadable: false, ShowHidden: true}))
+}

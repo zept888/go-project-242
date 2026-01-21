@@ -3,10 +3,12 @@ package code
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
 type Options struct {
 	HumanReadable bool
+	ShowHidden    bool
 }
 
 func GetSize(path string, opts Options) error {
@@ -26,6 +28,9 @@ func GetSize(path string, opts Options) error {
 			return fmt.Errorf("failed to read dir %s: %w\n", path, err)
 		}
 		for _, file := range files {
+			if !opts.ShowHidden && strings.HasPrefix(file.Name(), ".") {
+				continue
+			}
 			info, err := file.Info()
 			if err != nil {
 				return fmt.Errorf("failed to get file info for %s: %w", file.Name(), err)

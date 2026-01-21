@@ -20,6 +20,11 @@ func main() {
 				Usage:   "human-readable sizes (auto-select unit)",
 				Aliases: []string{"H"},
 			},
+			&cli.BoolFlag{
+				Name:    "all",
+				Usage:   "include hidden files and directories",
+				Aliases: []string{"a"},
+			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			path := cmd.Args().First()
@@ -29,6 +34,7 @@ func main() {
 			}
 			opts := code.Options{
 				HumanReadable: cmd.Bool("human"),
+				ShowHidden:    cmd.Bool("all"),
 			}
 			return code.GetSize(path, opts)
 		},
