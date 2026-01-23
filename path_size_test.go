@@ -64,17 +64,17 @@ func TestFormatSize_Bytes(t *testing.T) {
 
 func TestFormatSize_Kilobytes(t *testing.T) {
 	result := FormatSize(2048, true)
-	assert.Equal(t, "2.00KB", result)
+	assert.Equal(t, "2.0KB", result)
 }
 
 func TestFormatSize_Megabytes(t *testing.T) {
 	result := FormatSize(1048576, true)
-	assert.Equal(t, "1.00MB", result)
+	assert.Equal(t, "1.0MB", result)
 }
 
 func TestFormatSize_Gigabytes(t *testing.T) {
 	result := FormatSize(1073741824, true)
-	assert.Equal(t, "1.00GB", result)
+	assert.Equal(t, "1.0GB", result)
 }
 
 func TestShowHiddenFlag_False(t *testing.T) {
