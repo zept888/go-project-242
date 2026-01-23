@@ -13,7 +13,7 @@ type Options struct {
 	Recursive     bool
 }
 
-func GetPathSize(path string, humanReadable bool, showHidden bool, recursive bool) (string, error) {
+func GetPathSize(path string, showHidden bool, humanReadable bool, recursive bool) (string, error) {
 	opts := Options{
 		HumanReadable: humanReadable,
 		ShowHidden:    showHidden,
