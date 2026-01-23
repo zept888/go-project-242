@@ -77,11 +77,13 @@ func CalcDirSize(dir string, opts Options) (int64, error) {
 		fullPath := filepath.Join(dir, file.Name())
 
 		if file.IsDir() {
-			subSize, err := CalcDirSize(fullPath, opts)
-			if err != nil {
-				return 0, err
+			if opts.Recursive {
+				subSize, err := CalcDirSize(fullPath, opts)
+				if err != nil {
+					return 0, err
+				}
+				totalSize += subSize
 			}
-			totalSize += subSize
 			continue
 		}
 
