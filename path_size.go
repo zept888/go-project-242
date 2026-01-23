@@ -66,7 +66,7 @@ func CalcDirSize(dir string, opts Options) (int64, error) {
 
 	files, err := os.ReadDir(dir)
 	if err != nil {
-		return 0, fmt.Errorf("failed to read dir %s: %w\n", dir, err)
+		return 0, fmt.Errorf("failed to read dir %s: %w", dir, err)
 	}
 
 	for _, file := range files {
