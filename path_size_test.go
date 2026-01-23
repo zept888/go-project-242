@@ -97,3 +97,49 @@ func TestShowHiddenFlag_OnlyHiddenFiles(t *testing.T) {
 	require.NoError(t, os.WriteFile(tmpDir+"/.hidden2.txt", make([]byte, 400), 0644))
 	require.NoError(t, GetSize(tmpDir, Options{HumanReadable: false, ShowHidden: true}))
 }
+
+func TestCalcDirSize_OneLevel(t *testing.T) {
+	tmpDir := t.TempDir()
+	subDir := tmpDir + "/subdir"
+	require.NoError(t, os.Mkdir(subDir, 0755))
+	require.NoError(t, os.WriteFile(subDir+"/file.txt", make([]byte, 100), 0644))
+	size, err := CalcDirSize(tmpDir, Options{Recursive: true})
+	require.NoError(t, err)
+	require.Equal(t, int64(100), size)
+}
+
+func TestCalcDirSize_TwoLevels(t *testing.T) {
+	tmpDir := t.TempDir()
+	require.NoError(t, os.WriteFile(tmpDir+"/file.txt", make([]byte, 100), 0644))
+	subDir := tmpDir + "/subdir"
+	require.NoError(t, os.Mkdir(subDir, 0755))
+	require.NoError(t, os.WriteFile(subDir+"/file1.txt", make([]byte, 200), 0644))
+	deep := subDir + "/deep"
+	require.NoError(t, os.Mkdir(deep, 0755))
+	require.NoError(t, os.WriteFile(deep+"/file2.txt", make([]byte, 300), 0644))
+	size, err := CalcDirSize(tmpDir, Options{Recursive: true})
+	require.NoError(t, err)
+	require.Equal(t, int64(600), size)
+}
+
+func TestCalcDirSize_HiddenFalse(t *testing.T) {
+	tmpDir := t.TempDir()
+	require.NoError(t, os.WriteFile(tmpDir+"/normal.txt", make([]byte, 100), 0644))
+	hidden := tmpDir + "/.hidden"
+	require.NoError(t, os.Mkdir(hidden, 0755))
+	require.NoError(t, os.WriteFile(hidden+"/secret.txt", make([]byte, 500), 0644))
+	size, err := CalcDirSize(tmpDir, Options{Recursive: true, ShowHidden: false})
+	require.NoError(t, err)
+	require.Equal(t, int64(100), size)
+}
+
+func TestCalcDirSize_HiddenTrue(t *testing.T) {
+	tmpDir := t.TempDir()
+	require.NoError(t, os.WriteFile(tmpDir+"/normal.txt", make([]byte, 100), 0644))
+	hidden := tmpDir + "/.hidden"
+	require.NoError(t, os.Mkdir(hidden, 0755))
+	require.NoError(t, os.WriteFile(hidden+"/secret.txt", make([]byte, 500), 0644))
+	size, err := CalcDirSize(tmpDir, Options{Recursive: true, ShowHidden: true})
+	require.NoError(t, err)
+	require.Equal(t, int64(600), size)
+}
