@@ -41,7 +41,7 @@ func main() {
 				HumanReadable: cmd.Bool("human"),
 				ShowHidden:    cmd.Bool("all"),
 			}
-			return code.GetPathSize(path, opts)
+			return code.GetSize(path, opts)
 		},
 	}
 

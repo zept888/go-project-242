@@ -13,7 +13,26 @@ type Options struct {
 	Recursive     bool
 }
 
-func GetPathSize(path string, opts Options) error {
+func GetPathSize(path string, humanReadable bool, showHidden bool, recursive bool) (int64, error) {
+	opts := Options{
+		HumanReadable: humanReadable,
+		ShowHidden:    showHidden,
+		Recursive:     recursive,
+	}
+
+	info, err := os.Lstat(path)
+	if err != nil {
+		return 0, fmt.Errorf("failed to Lstat %s: %w", path, err)
+	}
+
+	if !info.IsDir() {
+		return info.Size(), nil
+	}
+
+	return CalcDirSize(path, opts)
+}
+
+func GetSize(path string, opts Options) error {
 	info, err := os.Lstat(path)
 	if err != nil {
 		return fmt.Errorf("failed to Lstat %s: %w", path, err)
