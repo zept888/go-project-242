@@ -13,7 +13,7 @@ type Options struct {
 	Recursive     bool
 }
 
-func GetPathSize(path string, humanReadable bool, showHidden bool, recursive bool) (int64, error) {
+func GetPathSize(path string, humanReadable bool, showHidden bool, recursive bool) (string, error) {
 	opts := Options{
 		HumanReadable: humanReadable,
 		ShowHidden:    showHidden,
@@ -22,14 +22,20 @@ func GetPathSize(path string, humanReadable bool, showHidden bool, recursive boo
 
 	info, err := os.Lstat(path)
 	if err != nil {
-		return 0, fmt.Errorf("failed to Lstat %s: %w", path, err)
+		return "", fmt.Errorf("failed to Lstat %s: %w", path, err)
 	}
 
+	var size int64
 	if !info.IsDir() {
-		return info.Size(), nil
+		size = info.Size()
+	} else {
+		size, err = CalcDirSize(path, opts)
+		if err != nil {
+			return "", err
+		}
 	}
 
-	return CalcDirSize(path, opts)
+	return FormatSize(size, humanReadable), nil
 }
 
 func GetSize(path string, opts Options) error {
@@ -104,17 +110,17 @@ func FormatSize(size int64, human bool) string {
 
 	switch {
 	case size >= EB:
-		return fmt.Sprintf("%.2fEB", float64(size)/EB)
+		return fmt.Sprintf("%.1fEB", float64(size)/EB)
 	case size >= PB:
-		return fmt.Sprintf("%.2fPB", float64(size)/PB)
+		return fmt.Sprintf("%.1fPB", float64(size)/PB)
 	case size >= TB:
-		return fmt.Sprintf("%.2fTB", float64(size)/TB)
+		return fmt.Sprintf("%.1fTB", float64(size)/TB)
 	case size >= GB:
-		return fmt.Sprintf("%.2fGB", float64(size)/GB)
+		return fmt.Sprintf("%.1fGB", float64(size)/GB)
 	case size >= MB:
-		return fmt.Sprintf("%.2fMB", float64(size)/MB)
+		return fmt.Sprintf("%.1fMB", float64(size)/MB)
 	case size >= KB:
-		return fmt.Sprintf("%.2fKB", float64(size)/KB)
+		return fmt.Sprintf("%.1fKB", float64(size)/KB)
 	default:
 		return fmt.Sprintf("%dB", size)
 	}
