@@ -13,7 +13,7 @@ type Options struct {
 	Recursive     bool
 }
 
-func GetSize(path string, opts Options) error {
+func GetPathSize(path string, opts Options) error {
 	info, err := os.Lstat(path)
 	if err != nil {
 		return fmt.Errorf("failed to Lstat %s: %w", path, err)

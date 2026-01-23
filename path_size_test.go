@@ -10,12 +10,12 @@ import (
 
 func TestGetSize_EmptyDir(t *testing.T) {
 	tmpDir := t.TempDir()
-	err := GetSize(tmpDir, Options{})
+	err := GetPathSize(tmpDir, Options{})
 	require.NoError(t, err)
 }
 
 func TestGetSize_NonExistentDir(t *testing.T) {
-	err := GetSize("/nonexistent/dir", Options{})
+	err := GetPathSize("/nonexistent/dir", Options{})
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "failed to Lstat")
 }
@@ -24,7 +24,7 @@ func TestGetSize_OneFileDir(t *testing.T) {
 	tmpDir := t.TempDir()
 	filepath := tmpDir + "/test.txt"
 	require.NoError(t, os.WriteFile(filepath, make([]byte, 100), 0644))
-	err := GetSize(tmpDir, Options{})
+	err := GetPathSize(tmpDir, Options{})
 	assert.NoError(t, err)
 }
 
@@ -33,7 +33,7 @@ func TestGetSize_MultipleFilesDir(t *testing.T) {
 	require.NoError(t, os.WriteFile(tmpDir+"/test1.txt", make([]byte, 100), 0644))
 	require.NoError(t, os.WriteFile(tmpDir+"/test2.txt", make([]byte, 200), 0644))
 	require.NoError(t, os.WriteFile(tmpDir+"/test3.txt", make([]byte, 300), 0644))
-	err := GetSize(tmpDir, Options{})
+	err := GetPathSize(tmpDir, Options{})
 	assert.NoError(t, err)
 }
 
@@ -41,7 +41,7 @@ func TestGetSize_SingleFile(t *testing.T) {
 	tmpDir := t.TempDir()
 	filepath := tmpDir + "/file.txt"
 	require.NoError(t, os.WriteFile(filepath, make([]byte, 100), 0644))
-	err := GetSize(filepath, Options{})
+	err := GetPathSize(filepath, Options{})
 	require.NoError(t, err)
 }
 
@@ -49,7 +49,7 @@ func TestGetSize_WithHumanReadable(t *testing.T) {
 	tmpDir := t.TempDir()
 	filepath := tmpDir + "/test.txt"
 	require.NoError(t, os.WriteFile(filepath, make([]byte, 1000000), 0644))
-	require.NoError(t, GetSize(filepath, Options{HumanReadable: true}))
+	require.NoError(t, GetPathSize(filepath, Options{HumanReadable: true}))
 }
 
 func TestFormatSize_WithoutHum(t *testing.T) {
@@ -81,21 +81,21 @@ func TestShowHiddenFlag_False(t *testing.T) {
 	tmpDir := t.TempDir()
 	require.NoError(t, os.WriteFile(tmpDir+"/normal.txt", make([]byte, 100), 0644))
 	require.NoError(t, os.WriteFile(tmpDir+"/.hidden.txt", make([]byte, 300), 0644))
-	require.NoError(t, GetSize(tmpDir, Options{HumanReadable: false, ShowHidden: false}))
+	require.NoError(t, GetPathSize(tmpDir, Options{HumanReadable: false, ShowHidden: false}))
 }
 
 func TestShowHiddenFlag_True(t *testing.T) {
 	tmpDir := t.TempDir()
 	require.NoError(t, os.WriteFile(tmpDir+"/normal.txt", make([]byte, 100), 0644))
 	require.NoError(t, os.WriteFile(tmpDir+"/.hidden.txt", make([]byte, 300), 0644))
-	require.NoError(t, GetSize(tmpDir, Options{HumanReadable: false, ShowHidden: true}))
+	require.NoError(t, GetPathSize(tmpDir, Options{HumanReadable: false, ShowHidden: true}))
 }
 
 func TestShowHiddenFlag_OnlyHiddenFiles(t *testing.T) {
 	tmpDir := t.TempDir()
 	require.NoError(t, os.WriteFile(tmpDir+"/.hidden1.txt", make([]byte, 400), 0644))
 	require.NoError(t, os.WriteFile(tmpDir+"/.hidden2.txt", make([]byte, 400), 0644))
-	require.NoError(t, GetSize(tmpDir, Options{HumanReadable: false, ShowHidden: true}))
+	require.NoError(t, GetPathSize(tmpDir, Options{HumanReadable: false, ShowHidden: true}))
 }
 
 func TestCalcDirSize_OneLevel(t *testing.T) {
