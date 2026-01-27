@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/urfave/cli/v3" // imports as package "cli"
+	"github.com/urfave/cli/v3"
 )
 
 func main() {
@@ -37,11 +37,17 @@ func main() {
 				fmt.Println(".hexlet-path-size <path required>")
 				return nil
 			}
-			opts := code.Options{
-				HumanReadable: cmd.Bool("human"),
-				ShowHidden:    cmd.Bool("all"),
+			result, err := code.GetPathSize(
+				path,
+				cmd.Bool("recursive"),
+				cmd.Bool("human"),
+				cmd.Bool("all"),
+			)
+			if err != nil {
+				return err
 			}
-			return code.GetSize(path, opts)
+			fmt.Printf("%s\t%s\n", result, path)
+			return nil
 		},
 	}
 

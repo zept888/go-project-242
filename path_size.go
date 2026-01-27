@@ -29,16 +29,16 @@ func GetPathSize(path string, recursive bool, humanReadable bool, showHidden boo
 	if !info.IsDir() {
 		size = info.Size()
 	} else {
-		size, err = CalcDirSize(path, opts)
+		size, err = calcDirSize(path, opts)
 		if err != nil {
 			return "", err
 		}
 	}
 
-	return FormatSize(size, humanReadable), nil
+	return formatSize(size, humanReadable), nil
 }
 
-func GetSize(path string, opts Options) error {
+func getSize(path string, opts Options) error {
 	info, err := os.Lstat(path)
 	if err != nil {
 		return fmt.Errorf("failed to Lstat %s: %w", path, err)
@@ -46,22 +46,22 @@ func GetSize(path string, opts Options) error {
 
 	if !info.IsDir() {
 		size := info.Size()
-		formatted := FormatSize(size, opts.HumanReadable)
+		formatted := formatSize(size, opts.HumanReadable)
 		fmt.Printf("%s\t%s\n", formatted, path)
 		return nil
 	}
 
-	totalSize, err := CalcDirSize(path, opts)
+	totalSize, err := calcDirSize(path, opts)
 	if err != nil {
 		return err
 	}
 
-	formatted := FormatSize(totalSize, opts.HumanReadable)
+	formatted := formatSize(totalSize, opts.HumanReadable)
 	fmt.Printf("%s\t%s\n", formatted, path)
 	return nil
 }
 
-func CalcDirSize(dir string, opts Options) (int64, error) {
+func calcDirSize(dir string, opts Options) (int64, error) {
 	var totalSize int64
 
 	files, err := os.ReadDir(dir)
@@ -78,7 +78,7 @@ func CalcDirSize(dir string, opts Options) (int64, error) {
 
 		if file.IsDir() {
 			if opts.Recursive {
-				subSize, err := CalcDirSize(fullPath, opts)
+				subSize, err := calcDirSize(fullPath, opts)
 				if err != nil {
 					return 0, err
 				}
@@ -96,7 +96,7 @@ func CalcDirSize(dir string, opts Options) (int64, error) {
 	return totalSize, nil
 }
 
-func FormatSize(size int64, human bool) string {
+func formatSize(size int64, human bool) string {
 	if !human {
 		return fmt.Sprintf("%dB", size)
 	}
