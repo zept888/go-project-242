@@ -13,6 +13,11 @@ type Options struct {
 	Recursive     bool
 }
 
+// GetPathSize returns the formatted size of a file or directory.
+// For directories, it calculates the total size of all files.
+// If recursive is true, it includes files in subdirectories.
+// If humanReadable is true, it formats the size with units (KB, MB, etc.).
+// If showHidden is true, it includes hidden files (starting with dot).
 func GetPathSize(path string, recursive bool, humanReadable bool, showHidden bool) (string, error) {
 	opts := Options{
 		HumanReadable: humanReadable,
